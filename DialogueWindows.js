@@ -112,6 +112,7 @@
             this._imfx_disableAnimation = false;
             this._imfx_contentsBaseX = null;
             this._imfx_contentsBaseY = null;
+            this._imfx_typeSpeedMul = 1;
             this._imfx_playedSe = new Set();
             this._imfx_effectStarts = new Map();
         };
@@ -366,6 +367,12 @@
                     this._imfx_hasAnimation = true;
                     break;
                 }
+                case 'TYPESPEED': {
+                    const arg = imfxObtainBracketText(textState);
+                    const n = imfxToNumber(arg, 1);
+                    this._imfx_typeSpeedMul = Math.max(1, Math.floor(n));
+                    break;
+                }
                 case 'FXRESET': {
                     this._imfx_state = imfxCreateState();
                     break;
@@ -522,6 +529,7 @@
             this.contents.clear();
             this._imfxResetMessageState();
             this._imfx_forceAnimation = /(?:\\|\x1b)(shake|wave|bounce|float|sway|fade|rainbow|fxreset)/i.test(text || '');
+            this._imfx_typeSpeedMul = 1;
             
             if (!this._systemMode && this._faceName) {
                 this._drawFace();
@@ -630,6 +638,7 @@
             this._faceIndex = 0;
             this._imfx_hasAnimation = false;
             this._imfx_forceAnimation = false;
+            this._imfx_typeSpeedMul = 1;
             this.contents.clear();
         }
     }

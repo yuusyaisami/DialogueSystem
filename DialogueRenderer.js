@@ -222,9 +222,10 @@
             // スキップモードの場合は高速化
             const speed = DialogueManager.isSkipMode() ? 
                 Params.skipSpeed : Params.typingSpeed;
+            const mul = this._messageWindow._imfx_typeSpeedMul || 1;
 
             // 文字を進める
-            this._typingIndex += speed;
+            this._typingIndex += speed * mul;
 
             if (this._typingIndex >= this._typingText.length) {
                 this._typingIndex = this._typingText.length;
