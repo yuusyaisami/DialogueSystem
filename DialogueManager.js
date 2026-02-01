@@ -932,6 +932,8 @@
             if (this._logOpen) {
                 if (Input.isTriggered(Params.inputCancel) || 
                     Input.isTriggered('cancel') ||
+                    Input.isTriggered(Params.inputLog) ||
+                    Input.isTriggered('pageup') ||
                     Input.isTriggered(Params.inputNext) ||
                     TouchInput.isCancelled()) {
                     this.closeLog();

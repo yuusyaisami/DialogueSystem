@@ -886,6 +886,12 @@
         setLog(log) {
             this._log = log.slice().reverse(); // 新しいものを上に
             this.refresh();
+            this.clearScrollStatus();
+            this._scrollX = 0;
+            this._scrollY = 0;
+            this._scrollBaseX = 0;
+            this._scrollBaseY = 0;
+            this.updateOrigin();
         }
 
         refresh() {
@@ -900,7 +906,8 @@
             const textState = this.createTextState(text, 0, 0, width);
             textState.drawing = false;
             this.processAllText(textState);
-            return Math.max(textState.outputHeight, this.lineHeight());
+            const output = Number.isFinite(textState.outputHeight) ? textState.outputHeight : 0;
+            return Math.max(output, this.lineHeight());
         }
 
         _calculateTotalHeight() {
@@ -956,7 +963,7 @@
         }
 
         overallHeight() {
-            return this._allTextHeight;
+            return Number.isFinite(this._allTextHeight) ? this._allTextHeight : this.innerHeight;
         }
 
         processTouch() {
@@ -1333,7 +1340,11 @@
         }
 
         if (DialogueManager.isLogOpen()) {
-            if (Input.isTriggered(Params.inputCancel) || Input.isTriggered('cancel') || TouchInput.isCancelled()) {
+            if (Input.isTriggered(Params.inputCancel) ||
+                Input.isTriggered('cancel') ||
+                Input.isTriggered(Params.inputLog) ||
+                Input.isTriggered('pageup') ||
+                TouchInput.isCancelled()) {
                 DialogueManager.closeLog();
             }
             return;
