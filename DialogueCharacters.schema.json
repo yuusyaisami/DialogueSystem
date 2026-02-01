@@ -1,0 +1,153 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://example.com/dialogue-characters.schema.json",
+    "title": "Dialogue Characters Database",
+    "description": "DialogueFramework MZ のキャラクターデータベース定義スキーマ",
+    "type": "object",
+    "properties": {
+        "version": {
+            "type": "string",
+            "description": "スキーマバージョン"
+        },
+        "characters": {
+            "type": "array",
+            "description": "キャラクター定義の配列",
+            "items": {
+                "$ref": "#/definitions/Character"
+            }
+        }
+    },
+    "required": ["characters"],
+    "definitions": {
+        "Character": {
+            "type": "object",
+            "description": "キャラクター定義",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "キャラクターID（0=システムメッセージ）"
+                },
+                "name": {
+                    "type": "string",
+                    "description": "表示名"
+                },
+                "displayTypeDefault": {
+                    "type": "string",
+                    "enum": ["face", "portrait"],
+                    "default": "face",
+                    "description": "デフォルト表示タイプ"
+                },
+                "face": {
+                    "oneOf": [
+                        { "type": "null" },
+                        { "$ref": "#/definitions/FaceConfig" }
+                    ],
+                    "description": "顔グラフィック設定（MZ風）"
+                },
+                "portrait": {
+                    "oneOf": [
+                        { "type": "null" },
+                        { "$ref": "#/definitions/PortraitConfig" }
+                    ],
+                    "description": "立ち絵設定（VN風）"
+                },
+                "states": {
+                    "type": "array",
+                    "items": { "type": "string" },
+                    "default": ["normal"],
+                    "description": "使用する状態キー一覧"
+                },
+                "meta": {
+                    "type": "object",
+                    "description": "任意拡張メタデータ",
+                    "properties": {
+                        "voicePrefix": {
+                            "type": "string",
+                            "description": "ボイスファイルのプレフィックス"
+                        },
+                        "themeColor": {
+                            "type": "string",
+                            "pattern": "^#[0-9A-Fa-f]{6}$",
+                            "description": "テーマカラー（名前枠などに使用）"
+                        },
+                        "isSystem": {
+                            "type": "boolean",
+                            "description": "システムキャラクターフラグ"
+                        },
+                        "isAnonymous": {
+                            "type": "boolean",
+                            "description": "匿名キャラクターフラグ"
+                        },
+                        "description": {
+                            "type": "string",
+                            "description": "キャラクターの説明（開発用）"
+                        }
+                    },
+                    "additionalProperties": true
+                }
+            },
+            "required": ["id", "name"]
+        },
+        "FaceConfig": {
+            "type": "object",
+            "description": "顔グラフィック設定",
+            "properties": {
+                "faceName": {
+                    "type": "string",
+                    "description": "img/faces のファイル名（拡張子なし）"
+                },
+                "faceIndexByState": {
+                    "type": "object",
+                    "description": "状態キー → 顔インデックス（0-7）のマッピング",
+                    "additionalProperties": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 7
+                    }
+                }
+            },
+            "required": ["faceName"]
+        },
+        "PortraitConfig": {
+            "type": "object",
+            "description": "立ち絵設定",
+            "properties": {
+                "base": {
+                    "type": "string",
+                    "description": "デフォルト立ち絵ファイル名（拡張子なし）"
+                },
+                "byState": {
+                    "type": "object",
+                    "description": "状態キー → 立ち絵ファイル名のマッピング",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "defaultSlot": {
+                    "type": "string",
+                    "enum": ["L", "C", "R"],
+                    "default": "C",
+                    "description": "デフォルト表示位置"
+                },
+                "anchor": {
+                    "type": "string",
+                    "enum": ["bottom", "center"],
+                    "default": "bottom",
+                    "description": "アンカーポイント"
+                }
+            },
+            "required": ["base"]
+        },
+        "StateKey": {
+            "type": "string",
+            "description": "状態キー（例: normal, happy, sad, angry, surprised, thinking）",
+            "examples": ["normal", "happy", "sad", "angry", "surprised", "thinking", "nervous", "serious", "confident"]
+        },
+        "Slot": {
+            "type": "string",
+            "enum": ["L", "C", "R"],
+            "description": "立ち絵表示スロット（L=左, C=中央, R=右）"
+        }
+    }
+}
